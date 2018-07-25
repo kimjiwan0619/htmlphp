@@ -1,33 +1,40 @@
 <?php
-session_start();
 $id=$_POST['id'];
 $pw=$_POST['pw'];
-$mysqli=mysql_connect("localhost","root","비밀번호","test2");
 
-$check="SELECT *FROM user_info WHERE userid='$id'";
-$result=$mysqli->query($check);
-if($result->num_rows==1)
+$db = mysqli_connect('127.0.0.1', 'root', 'autoset', 'dasom'); //서버주소, php 아이디, 비번, 스키마 이름
+if(mysqli_connect_errno())
 {
-  $row=$result->fetch_array(MYSQLI_ASSOC);
-  if($row['userpw']==$pw)
-  {
-    $_SESSION['userid']=$id;
-  }
-    if(isset($_SESSION['userid']))
+  echo "Failed to connect to MySQL!";
+} //접속 실패시
+
+$pass_encode=md5($pw);
+$table_name="user_list";
+$sql="SELECT pw FROM $table_name WHERE name ='$id'";
+if($result = mysqli_query($db, $sql))
+{
+    if(mysqli_num_rows($result) == 0)
     {
-      header('Location:./main/php');
+        echo "<script>alert('No matched ID.');</script>";
+        echo "<script>window.location.replace('http://127.0.0.1/web/login.html');</script>";
     }
     else
     {
-      echo"세션저장실패";
+        $row = mysqli_fetch_assoc($result);
+        if($row["pw"] == $pass_encode) // 로그인 성공
+        {
+            // 리디렉션
+            echo "<script>alert('Login Succeed.');</script>";
+            echo "<script>location.href='http://www.naver.com';</script>";
+        }
+        else
+        {
+            echo "<script>alert('Wrong Password.');</script>";
+            echo "<script>window.location.replace('http://127.0.0.1/web/login.html');</script>";
+        }
     }
-  else
-  {
-    echo"세션 저장 실패";
-  }
-else
-{
-  echo "wrong id or pw"
 }
-}
- ?>
+mysqli_free_result($result);
+mysqli_close($db);
+
+?>

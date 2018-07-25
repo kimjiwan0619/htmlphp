@@ -1,0 +1,61 @@
+<?php
+$db = mysqli_connect('127.0.0.1', 'root', 'autoset', 'dasom'); //서버주소, php 아이디, 비번, 스키마 이름
+if(mysqli_connect_errno())
+{
+  echo "Failed to connect to MySQL!";
+} //접속 실패시
+
+$table_name = "user_list";
+$get_info = "SELECT `id`, `pw`, `name`, `email`,`permission` FROM $table_name WHERE 1";
+$result = mysqli_query($db, $get_info);
+
+$row = mysqli_fetch_array($result, MYSQL_BOTH);//어드민인 devleti는 목록에 안나오게
+$row = mysqli_fetch_array($result, MYSQL_BOTH);
+?>
+
+<!DOCTYPE html>
+<html lang="kr" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>You've got in!</title>
+    <link rel="stylesheet" type="text/css" href="logged_in.css">
+  </head>
+
+  <body>
+    <div class ="frame">
+      <div class = "header">
+        <div class = "logo">GoGGLE</div>
+      </div>
+
+      <ul>
+        <li><a href="./logged_in_admin.html">Logo</a></li>
+      
+      </ul>
+
+    <div class = "container">
+      <div class = "nav">aaaa</div>
+      <div class = "content">
+        <table class = "content_table" id = "information_table">
+
+
+        <?php
+              echo "<tr><td>123</td><td>id</td><td>pw</td><td>name</td><td>email</td><td>permision</td><td>";
+
+              while($row[0] != "") //이름이 ""이면 break;
+              {
+                echo "<tr><td name = 'id'>$row[0]</td><td>$row[2]</td><td>$row[3]</td><td>$row[4]</td><td><form method = 'GET' action = './user_permission.php'>
+                  <button type='submit' name = 'name' value = '$row[0]'>상태변경</button></form></td><td><form method = 'GET' action = './user_delete.php'>
+                  <button type='submit' name = 'id' value = '$row[0]'>삭제</button></form></td></tr>";
+                $row = mysqli_fetch_array($result, MYSQL_BOTH);
+              }
+        ?>
+
+
+
+        </table>
+      </div>
+
+    </form>
+
+  </body>
+</html>
